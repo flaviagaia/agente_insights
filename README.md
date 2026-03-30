@@ -69,6 +69,24 @@ O runtime planejado usa:
 - `OpenAI`
   - backend de modelo quando há `OPENAI_API_KEY`.
 
+### Decisões de design
+
+- `FunctionAgent`
+  - escolhido por ser um padrão simples de `tool-calling` com baixa sobrecarga para MVPs orientados a tarefas;
+- `FunctionTool`
+  - usado para encapsular lógica de domínio sem acoplar o raciocínio analítico ao framework;
+- `fallback determinístico`
+  - preserva o contrato de saída, reduz risco operacional local e facilita teste automatizado;
+- `snapshot grounding`
+  - a resposta do agente é sempre ancorada em um snapshot tabular estruturado, evitando geração especulativa.
+
+Essa separação deixa explícito o limite entre:
+
+- camada de dados;
+- camada analítica;
+- camada de orquestração agentic;
+- camada de apresentação.
+
 ### Tools registradas
 
 - `get_business_snapshot`
@@ -83,6 +101,17 @@ O runtime planejado usa:
    - usado quando há runtime LlamaIndex funcional e chave de API;
 2. `deterministic_fallback`
    - usado para execução local e reprodutível sem dependência externa.
+
+### Contrato funcional entre tools e agente
+
+O fluxo foi desenhado para que o agente componha a resposta final sobre quatro artefatos intermediários:
+
+1. `snapshot bruto`
+2. `diagnóstico numérico`
+3. `leitura de risco e oportunidade`
+4. `plano executivo de ação`
+
+Conceitualmente, isso transforma o agente em um `decision support composer`, e não apenas em um gerador livre de texto.
 
 ## Ferramentas Analíticas
 
@@ -106,11 +135,38 @@ Traduz os sinais quantitativos em:
 - riscos executivos;
 - oportunidades de crescimento ou eficiência.
 
+Lógica qualitativa aplicada:
+
+- `growth_pct < 0`
+  - sinaliza contração de receita;
+- `churn_pct >= 6`
+  - indica erosão relevante da base;
+- `marketing_cac >= 1000`
+  - indica pressão de aquisição;
+- `on_time_delivery_pct < 90`
+  - indica atrito operacional;
+- `gross_margin_pct >= 65` ou `churn_pct <= 3`
+  - geram leitura de oportunidade ou resiliência.
+
 ### `generate_executive_insights`
 Consolida os sinais em uma narrativa board-ready.
 
+Essa camada atua como um `executive summarizer`, transformando:
+
+- indicadores brutos;
+- riscos mapeados;
+- oportunidades detectadas
+
+em uma síntese compacta para liderança.
+
 ### `suggest_business_actions`
 Produz um conjunto priorizado de ações táticas e executivas.
+
+As ações são priorizadas por associação direta com as `risk_flags`, mantendo rastreabilidade entre:
+
+- evidência observada;
+- insight gerado;
+- recomendação proposta.
 
 ## Modelo de Dados
 
@@ -173,6 +229,25 @@ Os snapshots demo incluem:
 }
 ```
 
+### Semântica do retorno
+
+- `runtime_mode`
+  - identifica se a resposta foi produzida pelo agente LlamaIndex ou pelo fallback;
+- `snapshot`
+  - dado canônico consultado no início do fluxo;
+- `diagnostics`
+  - camada analítica derivada do snapshot;
+- `risks_and_opportunities`
+  - interpretação qualitativa do estado do negócio;
+- `executive_insight`
+  - síntese executiva board-ready;
+- `recommended_actions`
+  - conjunto priorizado de recomendações;
+- `final_message`
+  - resposta consolidada entregue ao usuário.
+
+Esse contrato único permite trocar o runtime sem alterar a interface consumidora.
+
 ## Persistência e Artefatos
 
 O script [main.py](/Users/flaviagaia/Documents/CV_FLAVIA_CODEX/agente_insights/main.py) gera o artefato:
@@ -180,6 +255,13 @@ O script [main.py](/Users/flaviagaia/Documents/CV_FLAVIA_CODEX/agente_insights/m
 - `data/processed/business_insights_report.json`
 
 Esse arquivo é produzido em runtime para auditoria local e não faz parte dos arquivos versionados do repositório.
+
+Do ponto de vista de arquitetura, esse artefato pode ser usado futuramente como:
+
+- `execution log`;
+- `evaluation sample`;
+- `audit trail`;
+- `handoff payload` para outros sistemas.
 
 ## Interface Streamlit
 
@@ -189,6 +271,29 @@ O app funciona como um `inspection console` para:
 - submeter uma pergunta executiva;
 - visualizar runtime, crescimento e receita por cliente;
 - inspecionar diagnóstico, risco, oportunidades e snapshot.
+
+Na prática, o Streamlit funciona como uma `debuggable presentation layer`, permitindo:
+
+- verificar o contrato de saída;
+- comparar o insight textual com os números de origem;
+- inspecionar a coerência entre flags e ações recomendadas;
+- demonstrar o comportamento do sistema sem depender apenas do código.
+
+## Validação
+
+Os testes em [tests/test_agent.py](/Users/flaviagaia/Documents/CV_FLAVIA_CODEX/agente_insights/tests/test_agent.py) verificam:
+
+- presença de `risk_flags` no diagnóstico;
+- geração de ações prioritárias;
+- existência de mensagem final consolidada.
+
+Além disso, o projeto foi validado com:
+
+```bash
+python3 main.py
+python3 -m unittest discover -s tests -v
+python3 -m py_compile app.py src/agent.py src/tools.py src/sample_data.py main.py
+```
 
 ## Execução Local
 
@@ -217,6 +322,17 @@ streamlit run app.py
 - a execução agentic real depende do runtime `LlamaIndex`;
 - o fallback é proposital para portabilidade local.
 
+## Roadmap Técnico
+
+Possíveis evoluções para uma versão mais robusta:
+
+- adicionar comparação multi-período por série histórica;
+- incorporar benchmarks por setor;
+- introduzir memória de contexto por empresa;
+- conectar o agente a um índice documental com atas, relatórios ou feedbacks de clientes;
+- incluir scoring executivo composto por crescimento, retenção, eficiência e satisfação;
+- adicionar observabilidade do runtime agentic.
+
 ## English Version
 
 `Agente Insights` is a `LlamaIndex Agents` MVP for executive business insight generation. The project combines structured business snapshots, analytical tools, and an agent-based orchestration layer to answer leadership questions about growth, churn, CAC pressure, operational quality, and prioritization. When the LlamaIndex runtime is unavailable, a deterministic fallback preserves the same output contract for local reproducibility.
@@ -229,3 +345,5 @@ streamlit run app.py
 - structured snapshot data as the grounding layer
 - Streamlit inspection console
 - persisted runtime artifact generated at execution time in `data/processed/business_insights_report.json`
+- explicit separation between snapshot, analytics, orchestration, and presentation layers
+- analytical heuristics for growth, churn pressure, CAC pressure, and operational quality
