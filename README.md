@@ -11,6 +11,10 @@ O sistema responde perguntas como:
 - onde estão os principais riscos de churn, CAC ou eficiência?
 - quais ações deveríamos priorizar no próximo ciclo?
 
+## Interface
+
+![Interface do agente de insights](assets/agente_negocio.jpg)
+
 ## Arquitetura
 
 ```mermaid
@@ -336,6 +340,10 @@ Possíveis evoluções para uma versão mais robusta:
 ## English Version
 
 `Agente Insights` is a `LlamaIndex Agents` MVP for executive business insight generation. The project combines structured business snapshots, analytical tools, and an agent-based orchestration layer to answer leadership questions about growth, churn, CAC pressure, operational quality, and prioritization. When the LlamaIndex runtime is unavailable, a deterministic fallback preserves the same output contract for local reproducibility.
+
+## Interface
+
+![Business insights agent interface](assets/agente_negocio.jpg)
 
 ### Technical Highlights
 
