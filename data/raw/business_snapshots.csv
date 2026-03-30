@@ -1,0 +1,4 @@
+company_id,company_name,sector,period,revenue_current,revenue_previous,gross_margin_pct,active_customers,new_customers,churn_pct,nps,marketing_cac,support_tickets,on_time_delivery_pct,inventory_turnover,notes
+BIZ-1001,NovaOps,B2B SaaS,2026-Q1,1250000,1080000,71.4,415,52,4.8,46,860,920,95.2,0.0,"Expansão comercial forte, mas aumento de tickets de onboarding."
+BIZ-1002,RetailPulse,Retail Analytics,2026-Q1,840000,865000,58.1,288,21,7.2,31,1120,710,89.4,0.0,"Queda moderada de receita e churn pressionado por concorrência com menor preço."
+BIZ-1003,LogiChain,Supply Chain Tech,2026-Q1,2140000,1995000,49.7,164,13,2.1,54,2410,380,87.1,4.9,"Receita cresce, mas margem e eficiência operacional merecem atenção."
