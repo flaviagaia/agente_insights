@@ -173,6 +173,14 @@ Os snapshots demo incluem:
 }
 ```
 
+## Persistência e Artefatos
+
+O script [main.py](/Users/flaviagaia/Documents/CV_FLAVIA_CODEX/agente_insights/main.py) gera o artefato:
+
+- `data/processed/business_insights_report.json`
+
+Esse arquivo é produzido em runtime para auditoria local e não faz parte dos arquivos versionados do repositório.
+
 ## Interface Streamlit
 
 O app funciona como um `inspection console` para:
@@ -220,4 +228,4 @@ streamlit run app.py
 - deterministic fallback for local execution
 - structured snapshot data as the grounding layer
 - Streamlit inspection console
-- persisted runtime artifact in `data/processed/business_insights_report.json`
+- persisted runtime artifact generated at execution time in `data/processed/business_insights_report.json`
