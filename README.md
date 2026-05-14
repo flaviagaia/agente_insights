@@ -49,17 +49,17 @@ O projeto foi estruturado em quatro camadas:
 
 ## Estrutura do Projeto
 
-- [src/sample_data.py](/Users/flaviagaia/Documents/CV_FLAVIA_CODEX/agente_insights/src/sample_data.py)
+- [src/sample_data.py](src/sample_data.py)
   - base demo de snapshots de negócio.
-- [src/tools.py](/Users/flaviagaia/Documents/CV_FLAVIA_CODEX/agente_insights/src/tools.py)
+- [src/tools.py](src/tools.py)
   - ferramentas analíticas e geradoras de insight.
-- [src/agent.py](/Users/flaviagaia/Documents/CV_FLAVIA_CODEX/agente_insights/src/agent.py)
+- [src/agent.py](src/agent.py)
   - orquestração com `LlamaIndex Agents` e fallback.
-- [app.py](/Users/flaviagaia/Documents/CV_FLAVIA_CODEX/agente_insights/app.py)
+- [app.py](app.py)
   - console de inspeção técnica em `Streamlit`.
-- [main.py](/Users/flaviagaia/Documents/CV_FLAVIA_CODEX/agente_insights/main.py)
+- [main.py](main.py)
   - execução rápida e persistência do relatório.
-- [tests/test_agent.py](/Users/flaviagaia/Documents/CV_FLAVIA_CODEX/agente_insights/tests/test_agent.py)
+- [tests/test_agent.py](tests/test_agent.py)
   - validação do fluxo central.
 
 ## Como o LlamaIndex Agent foi modelado
@@ -254,7 +254,7 @@ Esse contrato único permite trocar o runtime sem alterar a interface consumidor
 
 ## Persistência e Artefatos
 
-O script [main.py](/Users/flaviagaia/Documents/CV_FLAVIA_CODEX/agente_insights/main.py) gera o artefato:
+O script [main.py](main.py) gera o artefato:
 
 - `data/processed/business_insights_report.json`
 
@@ -285,7 +285,7 @@ Na prática, o Streamlit funciona como uma `debuggable presentation layer`, perm
 
 ## Validação
 
-Os testes em [tests/test_agent.py](/Users/flaviagaia/Documents/CV_FLAVIA_CODEX/agente_insights/tests/test_agent.py) verificam:
+Os testes em [tests/test_agent.py](tests/test_agent.py) verificam:
 
 - presença de `risk_flags` no diagnóstico;
 - geração de ações prioritárias;
